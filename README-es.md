@@ -5,7 +5,7 @@ Aplicación flotante para Wayland que permite seleccionar y copiar stickers (im�
 ## Características
 
 - Ventana flotante de tamaño fijo (400×600 píxeles) que siempre se mantiene encima.
-- Compatible con formatos: **PNG, JPG, JPEG, GIF** (incluyendo animación).
+- Compatible con formatos: **PNG, JPG, JPEG, GIF, WEBP** (incluyendo animación).
 - Vista previa de cada sticker en tamaño reducido.
 - Copia al portapapeles manteniendo el formato original (el GIF animado se copia como archivo, preservando la animación).
 - Cierre automático tras copiar un sticker.
