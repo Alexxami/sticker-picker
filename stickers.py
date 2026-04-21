@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# sticker_picker.py
-
 import sys
 import shutil
 import subprocess
@@ -15,7 +13,7 @@ class StickerPicker(Gtk.Window):
     def __init__(self):
         super().__init__(title="Sticker Picker")
         
-        # Ventana flotante y dimensiones fijas
+        # Floating window with fixed dimensions
         self.set_type_hint(Gdk.WindowTypeHint.POPUP_MENU)
         self.set_default_size(400, 600)
         self.set_resizable(False)
@@ -24,10 +22,9 @@ class StickerPicker(Gtk.Window):
         self.set_decorated(True)
         self.set_position(Gtk.WindowPosition.CENTER)
         
-        # Cerrar con Escape
         self.connect("key-press-event", self.on_key_press)
         
-        # Carpeta de stickers
+        # FOLDER
         self.stickers_dir = Path.home() / ".config" / "stickers"
         self.stickers_dir.mkdir(parents=True, exist_ok=True)
         
@@ -106,17 +103,17 @@ class StickerPicker(Gtk.Window):
             self.copy_and_close(sticker_path)
     
     def copy_and_close(self, sticker_path):
-        """Copia el sticker como URI de archivo (text/uri-list) y cierra"""
+        """Copies the sticker as a file URI (text/uri-list) and closes"""
         try:
-            # Convertir la ruta a URI de archivo
+            # Convert path to file URI
             file_uri = Path(sticker_path).resolve().as_uri()
-            # Copiar usando wl-copy con tipo text/uri-list
+            # Copy using wl-copy with text/uri-list type
             subprocess.run(['wl-copy', '-t', 'text/uri-list'], 
                            input=file_uri, 
                            encoding='utf-8', 
                            check=True)
         except Exception as e:
-            print(f"Error al copiar: {e}")
+            print(f"Error copying: {e}")
         finally:
             Gtk.main_quit()
     
