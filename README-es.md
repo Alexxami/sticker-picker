@@ -33,6 +33,11 @@ sudo pacman -S python python-gobject gtk3 wl-clipboard
 sudo dnf install python3 python3-gobject gtk3 wl-clipboard
 ```
 
+#### OpenSUSE
+```bash
+sudo zypper in python3 python3-gobject gtk3 wl-clipboard
+```
+
 ### 2. Crear el script
 
 Crea el archivo `sticker_picker.py` en la ubicación que prefieras (por ejemplo `~/bin/sticker_picker.py`) con el contenido del script (ver abajo).
