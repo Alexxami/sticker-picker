@@ -7,7 +7,7 @@ from pathlib import Path
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
-from gi.repository import Gtk, Gdk, GdkPixbuf
+from gi.repository import Gtk, Gdk, GdkPixbuf, Pango
 
 class StickerPicker(Gtk.Window):
     def __init__(self):
@@ -64,28 +64,122 @@ class StickerPicker(Gtk.Window):
         self.flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
         scrolled.add(self.flowbox)
     
+    def create_empty_state_widget(self):
+        """Create a beautiful empty state widget with visual appeal"""
+        # Container box with vertical layout
+        container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+        container.set_valign(Gtk.Align.CENTER)
+        container.set_halign(Gtk.Align.CENTER)
+        container.set_margin_top(80)
+        container.set_margin_bottom(80)
+        container.set_margin_start(30)
+        container.set_margin_end(30)
+        
+        # Emoji/sticker icon as a label (since it's simple and works everywhere)
+        icon_label = Gtk.Label()
+        icon_label.set_markup("<span size='80000'>🎨</span>")
+        icon_label.set_valign(Gtk.Align.CENTER)
+        icon_label.set_halign(Gtk.Align.CENTER)
+        container.pack_start(icon_label, False, False, 0)
+        
+        # Main title
+        title_label = Gtk.Label()
+        title_label.set_markup("<span weight='bold' size='large'>No Stickers Yet</span>")
+        title_label.set_justify(Gtk.Justification.CENTER)
+        container.pack_start(title_label, False, False, 0)
+        
+        # Subtitle with instructions
+        subtitle_label = Gtk.Label()
+        subtitle_label.set_markup(
+            "<span foreground='#888888'>Add some stickers to get started\n"
+            "Click the <b>+</b> button in the top bar to add images</span>"
+        )
+        subtitle_label.set_justify(Gtk.Justification.CENTER)
+        subtitle_label.set_line_wrap(True)
+        subtitle_label.set_max_width_chars(30)
+        container.pack_start(subtitle_label, False, False, 0)
+        
+        # Hint about supported formats
+        hint_label = Gtk.Label()
+        hint_label.set_markup(
+            "<span foreground='#aaaaaa' size='small'>Supported: PNG, JPG, GIF, WebP</span>"
+        )
+        hint_label.set_justify(Gtk.Justification.CENTER)
+        container.pack_start(hint_label, False, False, 0)
+        
+        # Add a subtle separator
+        separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        separator.set_margin_top(10)
+        separator.set_size_request(150, -1)
+        container.pack_start(separator, False, False, 0)
+        
+        # Quick tip
+        tip_label = Gtk.Label()
+        tip_label.set_markup(
+            "<span foreground='#666666' size='small'>💡 Tip: Press ESC to close</span>"
+        )
+        tip_label.set_justify(Gtk.Justification.CENTER)
+        container.pack_start(tip_label, False, False, 0)
+        
+        # Apply CSS styling for better visual appearance
+        css_provider = Gtk.CssProvider()
+        css = """
+            .empty-state {
+                background-color: alpha(currentColor, 0.02);
+                border-radius: 12px;
+                padding: 20px;
+            }
+        """
+        css_provider.load_from_data(css.encode())
+        context = container.get_style_context()
+        context.add_class("empty-state")
+        context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        
+        container.show_all()
+        return container
+    
     def load_stickers(self):
+        # Clear existing children
         for child in self.flowbox.get_children():
             child.destroy()
         
+        # Collect all sticker files
         sticker_files = []
         for ext in self.supported_extensions:
             sticker_files.extend(self.stickers_dir.glob(f"*{ext}"))
             sticker_files.extend(self.stickers_dir.glob(f"*{ext.upper()}"))
         sticker_files.sort()
         
+        # Show beautiful empty state if no stickers
         if not sticker_files:
-            label = Gtk.Label(label="No stickers found.\nClick '+' to add stickers")
-            label.set_justify(Gtk.Justification.CENTER)
-            self.flowbox.add(label)
+            empty_widget = self.create_empty_state_widget()
+            self.flowbox.add(empty_widget)
             return
         
+        # Add all stickers
         for path in sticker_files:
             self.add_sticker_button(path)
     
     def add_sticker_button(self, sticker_path):
         event_box = Gtk.EventBox()
         event_box.connect("button-press-event", self.on_sticker_clicked, sticker_path)
+        
+        # Add hover effect with CSS
+        css_provider = Gtk.CssProvider()
+        css = """
+            .sticker-button:hover {
+                background-color: rgba(128, 128, 128, 0.1);
+                border-radius: 8px;
+            }
+            .sticker-button {
+                padding: 8px;
+                transition: all 0.2s ease;
+            }
+        """
+        css_provider.load_from_data(css.encode())
+        context = event_box.get_style_context()
+        context.add_class("sticker-button")
+        context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         
         try:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(str(sticker_path), 100, 100)
