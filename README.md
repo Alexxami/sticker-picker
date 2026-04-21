@@ -38,17 +38,13 @@ sudo dnf install python3 python3-gobject gtk3 wl-clipboard
 sudo zypper in python3 python3-gobject gtk3 wl-clipboard
 ```
 
-### 2. Create the script
-
-Create the file `sticker_picker.py` in your preferred location (e.g., `~/bin/sticker_picker.py`) with the script content (see below).
-
-### 3. Make it executable
+### 2. Make it executable
 
 ```bash
-chmod +x ~/bin/sticker_picker.py
+mv sticker-picker/stickers.py /path/of/your/config/stickers.py
 ```
 
-### 4. Create the stickers folder
+### 3. Create the stickers folder
 
 ```bash
 mkdir -p ~/.config/stickers
@@ -57,12 +53,6 @@ mkdir -p ~/.config/stickers
 ## Usage
 
 ### Run the application
-
-```bash
-~/bin/sticker_picker.py
-```
-
-Or with Python:
 
 ```bash
 python3 ~/bin/sticker_picker.py
