@@ -146,7 +146,6 @@ class StickerPicker(Gtk.Window):
         self.delete_mode = widget.get_active()
         if self.delete_mode:
             self.edit_button.get_style_context().add_class("edit-button-active")
-            self.info_label.set_text("🗑️ Delete mode ON")
         else:
             self.edit_button.get_style_context().remove_class("edit-button-active")
             self.info_label.set_text("")
